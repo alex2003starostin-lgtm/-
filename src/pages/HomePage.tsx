@@ -6,6 +6,7 @@ import { departments, allSearchableForms } from '../data/catalog'
 import { searchForms } from '../lib/search'
 import DepartmentCard from '../components/DepartmentCard'
 import FormTile from '../components/FormTile'
+import { LogoMark } from '../components/Logo'
 import { useProfileStore } from '../store/profileStore'
 
 const POPULAR_IDS = [
@@ -41,6 +42,9 @@ export default function HomePage() {
         transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
         className="text-center max-w-2xl mx-auto mb-10"
       >
+        <div className="flex justify-center mb-5">
+          <LogoMark size={56} className="rounded-[16px] shadow-lg shadow-accent/20" />
+        </div>
         <h1 className="text-4xl sm:text-5xl font-semibold tracking-tight mb-3">
           {firstName ? `${firstName}, чем помочь?` : 'Чем мы можем помочь?'}
         </h1>

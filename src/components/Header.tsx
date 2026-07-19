@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { Search, Moon, Sun, ClipboardList, ListChecks, User as UserIcon } from 'lucide-react'
+import { Search, Moon, Sun, ListChecks, User as UserIcon } from 'lucide-react'
 import { useThemeStore } from '../store/themeStore'
 import { useProfileStore } from '../store/profileStore'
 import SearchPalette from './SearchPalette'
 import ProfileModal from './ProfileModal'
+import { LogoMark } from './Logo'
 
 export default function Header() {
   const { theme, toggleTheme } = useThemeStore()
@@ -38,13 +39,9 @@ export default function Header() {
     <>
       <header className="sticky top-0 z-40 border-b border-black/5 dark:border-white/10 bg-white/70 dark:bg-canvas-dark/70 backdrop-blur-xl">
         <div className="mx-auto flex max-w-6xl items-center gap-3 px-5 py-3">
-          <Link to="/" className="flex items-center gap-2 shrink-0 group">
-            <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-accent text-white shadow-sm group-hover:shadow-md transition-shadow">
-              <ClipboardList size={16} />
-            </div>
-            <span className="font-semibold tracking-tight text-[15px] hidden sm:inline">
-              Портал заявок
-            </span>
+          <Link to="/" className="flex items-center gap-2.5 shrink-0 group">
+            <LogoMark size={30} className="shadow-sm group-hover:shadow-md transition-shadow rounded-[9px]" />
+            <span className="font-semibold tracking-tight text-[15px] hidden sm:inline">GTDesk</span>
           </Link>
 
           <button

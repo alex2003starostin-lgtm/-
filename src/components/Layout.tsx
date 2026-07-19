@@ -28,7 +28,7 @@ export default function Layout() {
       </main>
       <footer className="border-t border-black/5 dark:border-white/10 py-8 mt-16">
         <div className="mx-auto max-w-6xl px-5 text-center text-xs text-subtle dark:text-subtle-dark">
-          Портал заявок · внутренний сервис технической поддержки
+          GTDesk · внутренний сервис технической поддержки
         </div>
       </footer>
     </div>
