@@ -2,7 +2,8 @@ import { useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { Search, ArrowRight, Lock } from 'lucide-react'
-import { departments, allSearchableForms } from '../data/catalog'
+import { allSearchableForms } from '../data/catalog'
+import { useCatalog } from '../data/useCatalog'
 import { searchForms } from '../lib/search'
 import DepartmentCard from '../components/DepartmentCard'
 import FormTile from '../components/FormTile'
@@ -22,15 +23,16 @@ const POPULAR_IDS = [
 export default function HomePage() {
   const [query, setQuery] = useState('')
   const { profile } = useProfileStore()
-  const hits = useMemo(() => searchForms(query, 6), [query])
-  const totalForms = useMemo(() => allSearchableForms().length, [])
+  const departments = useCatalog()
+  const hits = useMemo(() => searchForms(departments, query, 6), [departments, query])
+  const totalForms = useMemo(() => allSearchableForms(departments).length, [departments])
 
   const popular = useMemo(() => {
-    const all = allSearchableForms()
+    const all = allSearchableForms(departments)
     return POPULAR_IDS.map((id) => all.find((entry) => entry.form.id === id)).filter(
       (entry): entry is NonNullable<typeof entry> => Boolean(entry),
     )
-  }, [])
+  }, [departments])
 
   const firstName = profile?.name.split(' ')[0]
 

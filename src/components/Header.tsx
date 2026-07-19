@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { Search, Moon, Sun, ListChecks, User as UserIcon } from 'lucide-react'
+import { Search, Moon, Sun, ListChecks, ShieldCheck, User as UserIcon } from 'lucide-react'
 import { useThemeStore } from '../store/themeStore'
 import { useProfileStore } from '../store/profileStore'
 import SearchPalette from './SearchPalette'
@@ -68,6 +68,13 @@ export default function Header() {
               aria-label="Мои заявки"
             >
               <ListChecks size={16} />
+            </button>
+            <button
+              onClick={() => navigate('/admin')}
+              className="flex h-9 w-9 items-center justify-center rounded-full hover:bg-black/5 dark:hover:bg-white/10 transition-colors"
+              aria-label="Админ-панель"
+            >
+              <ShieldCheck size={16} />
             </button>
             <button
               onClick={toggleTheme}

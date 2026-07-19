@@ -1,12 +1,13 @@
 import { useParams, Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { departments } from '../data/catalog'
+import { useCatalog } from '../data/useCatalog'
 import Breadcrumbs from '../components/Breadcrumbs'
 import FormTile from '../components/FormTile'
 import NotFoundPage from './NotFoundPage'
 
 export default function DepartmentPage() {
   const { deptId } = useParams()
+  const departments = useCatalog()
   const department = departments.find((d) => d.id === deptId)
 
   if (!department) return <NotFoundPage />

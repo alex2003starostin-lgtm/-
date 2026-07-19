@@ -1,9 +1,10 @@
-import { useMemo, useState } from 'react'
+import { useState } from 'react'
 import { useParams, useNavigate, Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { Send, Loader2 } from 'lucide-react'
 import { findFormLocation } from '../data/catalog'
-import { getFormFields } from '../data/formSchemas'
+import { useCatalog } from '../data/useCatalog'
+import { useFormFields } from '../data/useFormFields'
 import Breadcrumbs from '../components/Breadcrumbs'
 import FieldRenderer, { type FieldValue } from '../components/FieldRenderer'
 import NotFoundPage from './NotFoundPage'
@@ -14,7 +15,8 @@ import type { Ticket } from '../data/types'
 export default function FormPage() {
   const { formId } = useParams()
   const navigate = useNavigate()
-  const location = formId ? findFormLocation(formId) : null
+  const departments = useCatalog()
+  const location = formId ? findFormLocation(departments, formId) : null
   const { profile, setProfile } = useProfileStore()
   const { addTicket } = useTicketStore()
 
@@ -25,9 +27,10 @@ export default function FormPage() {
   const [errors, setErrors] = useState<Record<string, string>>({})
   const [submitting, setSubmitting] = useState(false)
 
-  const fields = useMemo(
-    () => (location ? getFormFields(location.form.id, location.form.title, location.category?.title) : []),
-    [location],
+  const fields = useFormFields(
+    location?.form.id ?? '',
+    location?.form.title ?? '',
+    location?.category?.title,
   )
 
   if (!location) return <NotFoundPage />

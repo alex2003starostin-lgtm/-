@@ -1,4 +1,5 @@
 import { allSearchableForms } from '../data/catalog'
+import type { Department } from '../data/types'
 
 export interface SearchHit {
   formId: string
@@ -34,13 +35,13 @@ function hasWordStemMatch(queryWords: string[], textWords: string[]): boolean {
   })
 }
 
-export function searchForms(query: string, limit = 8): SearchHit[] {
+export function searchForms(departments: Department[], query: string, limit = 8): SearchHit[] {
   const q = normalize(query)
   if (!q) return []
   const qWords = words(q)
 
   const hits: SearchHit[] = []
-  for (const { form, department, category } of allSearchableForms()) {
+  for (const { form, department, category } of allSearchableForms(departments)) {
     const title = normalize(form.title)
     const dept = normalize(department.title)
     const cat = category ? normalize(category.title) : ''

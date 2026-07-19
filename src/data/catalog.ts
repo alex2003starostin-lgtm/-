@@ -78,7 +78,7 @@ import {
 } from 'lucide-react'
 import type { Department } from './types'
 
-export const departments: Department[] = [
+export const builtInDepartments: Department[] = [
   {
     id: 'it',
     title: 'ИТ',
@@ -943,7 +943,7 @@ export const departments: Department[] = [
   },
 ]
 
-export function findFormLocation(formId: string) {
+export function findFormLocation(departments: Department[], formId: string) {
   for (const department of departments) {
     for (const form of department.directForms) {
       if (form.id === formId) return { department, category: undefined, form }
@@ -957,8 +957,8 @@ export function findFormLocation(formId: string) {
   return null
 }
 
-export function allSearchableForms() {
-  const result: { form: (typeof departments)[number]['directForms'][number]; department: Department; category?: Department['categories'][number] }[] = []
+export function allSearchableForms(departments: Department[]) {
+  const result: { form: Department['directForms'][number]; department: Department; category?: Department['categories'][number] }[] = []
   for (const department of departments) {
     for (const form of department.directForms) {
       result.push({ form, department })
@@ -970,8 +970,4 @@ export function allSearchableForms() {
     }
   }
   return result
-}
-
-export function totalFormsCount() {
-  return allSearchableForms().length
 }

@@ -3,11 +3,13 @@ import { useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Search, X, ArrowRight, Lock } from 'lucide-react'
 import { searchForms } from '../lib/search'
+import { useCatalog } from '../data/useCatalog'
 
 export default function SearchPalette({ open, onClose }: { open: boolean; onClose: () => void }) {
   const [query, setQuery] = useState('')
   const navigate = useNavigate()
-  const hits = useMemo(() => searchForms(query), [query])
+  const departments = useCatalog()
+  const hits = useMemo(() => searchForms(departments, query), [departments, query])
 
   useEffect(() => {
     if (!open) setQuery('')

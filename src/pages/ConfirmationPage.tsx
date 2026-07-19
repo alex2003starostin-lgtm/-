@@ -2,19 +2,20 @@ import { useParams, Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { CheckCircle2 } from 'lucide-react'
 import { useTicketStore } from '../store/ticketStore'
-import { getFormFields } from '../data/formSchemas'
+import { useFormFields } from '../data/useFormFields'
 import { formatFieldValue, isFieldValueEmpty } from '../lib/formatFieldValue'
 import NotFoundPage from './NotFoundPage'
 
 export default function ConfirmationPage() {
   const { ticketId } = useParams()
   const ticket = useTicketStore((s) => s.tickets.find((t) => t.id === ticketId))
+  const fields = useFormFields(
+    ticket?.formId ?? '',
+    ticket?.formTitle ?? '',
+    ticket?.categoryTitle,
+  ).filter((f) => f.type !== 'info')
 
   if (!ticket) return <NotFoundPage />
-
-  const fields = getFormFields(ticket.formId, ticket.formTitle, ticket.categoryTitle).filter(
-    (f) => f.type !== 'info',
-  )
 
   return (
     <div className="mx-auto max-w-lg px-5 pt-16 pb-24 text-center">

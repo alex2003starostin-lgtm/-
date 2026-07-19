@@ -5,6 +5,8 @@ import DepartmentPage from './pages/DepartmentPage'
 import FormPage from './pages/FormPage'
 import ConfirmationPage from './pages/ConfirmationPage'
 import MyTicketsPage from './pages/MyTicketsPage'
+import AdminPage from './pages/AdminPage'
+import AdminNewFormPage from './pages/AdminNewFormPage'
 import NotFoundPage from './pages/NotFoundPage'
 
 function App() {
@@ -17,6 +19,8 @@ function App() {
           <Route path="/form/:formId" element={<FormPage />} />
           <Route path="/tickets" element={<MyTicketsPage />} />
           <Route path="/confirmation/:ticketId" element={<ConfirmationPage />} />
+          <Route path="/admin" element={<AdminPage />} />
+          <Route path="/admin/new" element={<AdminNewFormPage />} />
           <Route path="*" element={<NotFoundPage />} />
         </Route>
       </Routes>
