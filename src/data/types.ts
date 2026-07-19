@@ -34,6 +34,7 @@ export interface FormEntry {
   id: string
   title: string
   description: string
+  icon: LucideIcon
   disabled?: boolean
   disabledNote?: string
 }

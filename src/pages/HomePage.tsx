@@ -5,6 +5,7 @@ import { Search, ArrowRight, Lock } from 'lucide-react'
 import { departments, allSearchableForms } from '../data/catalog'
 import { searchForms } from '../lib/search'
 import DepartmentCard from '../components/DepartmentCard'
+import FormTile from '../components/FormTile'
 import { useProfileStore } from '../store/profileStore'
 
 const POPULAR_IDS = [
@@ -96,22 +97,14 @@ export default function HomePage() {
       </motion.div>
 
       {query.trim() === '' && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.5, delay: 0.15 }}
-          className="flex flex-wrap justify-center gap-2 mb-16"
-        >
-          {popular.map(({ form }) => (
-            <Link
-              key={form.id}
-              to={`/form/${form.id}`}
-              className="rounded-full border border-black/10 dark:border-white/10 bg-white dark:bg-surface-dark px-4 py-2 text-[13px] font-medium hover:border-accent hover:text-accent transition-colors"
-            >
-              {form.title}
-            </Link>
-          ))}
-        </motion.div>
+        <div className="mb-16">
+          <h2 className="text-xl font-semibold tracking-tight mb-5">Часто спрашивают</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {popular.map(({ form, department }, index) => (
+              <FormTile key={form.id} form={form} index={index} accentColor={department.color} />
+            ))}
+          </div>
+        </div>
       )}
 
       <div>

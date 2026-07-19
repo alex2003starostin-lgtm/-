@@ -2,7 +2,7 @@ import { useParams, Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { departments } from '../data/catalog'
 import Breadcrumbs from '../components/Breadcrumbs'
-import FormListItem from '../components/FormListItem'
+import FormTile from '../components/FormTile'
 import NotFoundPage from './NotFoundPage'
 
 export default function DepartmentPage() {
@@ -20,7 +20,7 @@ export default function DepartmentPage() {
   ]
 
   return (
-    <div className="mx-auto max-w-4xl px-5 pt-8 pb-20">
+    <div className="mx-auto max-w-6xl px-5 pt-8 pb-20">
       <Breadcrumbs items={[{ label: department.title }]} />
 
       <motion.div
@@ -64,9 +64,9 @@ export default function DepartmentPage() {
             <h2 className="text-sm font-semibold text-subtle dark:text-subtle-dark uppercase tracking-wide mb-2 px-1">
               {section.title}
             </h2>
-            <div className="rounded-3xl bg-white dark:bg-surface-dark shadow-[0_1px_2px_rgba(0,0,0,0.04),0_4px_16px_-8px_rgba(0,0,0,0.08)] divide-y divide-black/5 dark:divide-white/5 overflow-hidden">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {section.forms.map((form, i) => (
-                <FormListItem key={form.id} form={form} index={i} accentColor={department.color} />
+                <FormTile key={form.id} form={form} index={i} accentColor={department.color} />
               ))}
             </div>
           </div>
