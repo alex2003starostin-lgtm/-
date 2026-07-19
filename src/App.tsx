@@ -6,7 +6,7 @@ import FormPage from './pages/FormPage'
 import ConfirmationPage from './pages/ConfirmationPage'
 import MyTicketsPage from './pages/MyTicketsPage'
 import AdminPage from './pages/AdminPage'
-import AdminNewFormPage from './pages/AdminNewFormPage'
+import AdminFormBuilderPage from './pages/AdminFormBuilderPage'
 import NotFoundPage from './pages/NotFoundPage'
 
 function App() {
@@ -20,7 +20,8 @@ function App() {
           <Route path="/tickets" element={<MyTicketsPage />} />
           <Route path="/confirmation/:ticketId" element={<ConfirmationPage />} />
           <Route path="/admin" element={<AdminPage />} />
-          <Route path="/admin/new" element={<AdminNewFormPage />} />
+          <Route path="/admin/new" element={<AdminFormBuilderPage />} />
+          <Route path="/admin/edit/:formId" element={<AdminFormBuilderPage />} />
           <Route path="*" element={<NotFoundPage />} />
         </Route>
       </Routes>

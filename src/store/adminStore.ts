@@ -29,16 +29,29 @@ export interface CustomForm {
   createdAt: string
 }
 
+export interface FormOverride {
+  title?: string
+  description?: string
+  iconName?: string
+  fields?: FormField[]
+  disabled?: boolean
+  disabledNote?: string
+}
+
 interface AdminState {
   customDepartments: CustomDepartment[]
   customCategories: CustomCategory[]
   customForms: CustomForm[]
+  formOverrides: Record<string, FormOverride>
   addDepartment: (department: Omit<CustomDepartment, 'id'>) => string
   addCategory: (category: Omit<CustomCategory, 'id'>) => string
   addForm: (form: Omit<CustomForm, 'id' | 'createdAt'>) => string
+  updateForm: (id: string, patch: Partial<Omit<CustomForm, 'id' | 'createdAt'>>) => void
   removeDepartment: (id: string) => void
   removeCategory: (id: string) => void
   removeForm: (id: string) => void
+  setFormOverride: (id: string, override: FormOverride) => void
+  clearFormOverride: (id: string) => void
 }
 
 function newId(prefix: string): string {
@@ -51,6 +64,7 @@ export const useAdminStore = create<AdminState>()(
       customDepartments: [],
       customCategories: [],
       customForms: [],
+      formOverrides: {},
 
       addDepartment: (department) => {
         const id = newId('dept')
@@ -76,6 +90,11 @@ export const useAdminStore = create<AdminState>()(
         return id
       },
 
+      updateForm: (id, patch) =>
+        set((state) => ({
+          customForms: state.customForms.map((f) => (f.id === id ? { ...f, ...patch } : f)),
+        })),
+
       removeDepartment: (id) =>
         set((state) => ({
           customDepartments: state.customDepartments.filter((d) => d.id !== id),
@@ -93,6 +112,18 @@ export const useAdminStore = create<AdminState>()(
         set((state) => ({
           customForms: state.customForms.filter((f) => f.id !== id),
         })),
+
+      setFormOverride: (id, override) =>
+        set((state) => ({
+          formOverrides: { ...state.formOverrides, [id]: override },
+        })),
+
+      clearFormOverride: (id) =>
+        set((state) => {
+          const next = { ...state.formOverrides }
+          delete next[id]
+          return { formOverrides: next }
+        }),
     }),
     { name: 'support-portal-admin' },
   ),

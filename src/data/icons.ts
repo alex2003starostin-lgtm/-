@@ -76,6 +76,14 @@ import {
   Printer,
   Wifi,
   Lock,
+  Armchair,
+  Plug,
+  HeartPulse,
+  TrendingUp,
+  Receipt,
+  PenTool,
+  FilePlus2,
+  MessageSquarePlus,
 } from 'lucide-react'
 
 export const ICON_OPTIONS: { name: string; icon: LucideIcon }[] = [
@@ -155,6 +163,14 @@ export const ICON_OPTIONS: { name: string; icon: LucideIcon }[] = [
   { name: 'Printer', icon: Printer },
   { name: 'Wifi', icon: Wifi },
   { name: 'Lock', icon: Lock },
+  { name: 'Armchair', icon: Armchair },
+  { name: 'Plug', icon: Plug },
+  { name: 'HeartPulse', icon: HeartPulse },
+  { name: 'TrendingUp', icon: TrendingUp },
+  { name: 'Receipt', icon: Receipt },
+  { name: 'PenTool', icon: PenTool },
+  { name: 'FilePlus2', icon: FilePlus2 },
+  { name: 'MessageSquarePlus', icon: MessageSquarePlus },
 ]
 
 const ICON_MAP: Record<string, LucideIcon> = Object.fromEntries(
@@ -164,6 +180,11 @@ const ICON_MAP: Record<string, LucideIcon> = Object.fromEntries(
 export function resolveIcon(name: string | undefined): LucideIcon {
   if (!name) return HelpCircle
   return ICON_MAP[name] ?? HelpCircle
+}
+
+/** Reverse-lookup for pre-filling the icon picker when editing an existing form. */
+export function findIconName(icon: LucideIcon): string {
+  return ICON_OPTIONS.find((option) => option.icon === icon)?.name ?? 'HelpCircle'
 }
 
 export const COLOR_OPTIONS: { name: string; hex: string }[] = [

@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { ShieldCheck, Plus, Trash2, LogOut } from 'lucide-react'
+import { ShieldCheck, Plus, Trash2, Pencil, LogOut } from 'lucide-react'
 import { useCatalog } from '../data/useCatalog'
 import { useAdminStore } from '../store/adminStore'
 import { useAdminAuthStore } from '../store/adminAuthStore'
@@ -9,8 +9,15 @@ import { LogoMark } from '../components/Logo'
 export default function AdminPage() {
   const { isAdmin, setIsAdmin } = useAdminAuthStore()
   const departments = useCatalog()
-  const { customDepartments, customCategories, customForms, removeDepartment, removeCategory, removeForm } =
-    useAdminStore()
+  const {
+    customDepartments,
+    customCategories,
+    customForms,
+    formOverrides,
+    removeDepartment,
+    removeCategory,
+    removeForm,
+  } = useAdminStore()
 
   if (!isAdmin) return <AdminGate />
 
@@ -126,24 +133,39 @@ export default function AdminPage() {
                       <div className="rounded-2xl border border-black/5 dark:border-white/5 divide-y divide-black/5 dark:divide-white/5 overflow-hidden">
                         {section.forms.map((form) => {
                           const isCustomForm = customForms.some((f) => f.id === form.id)
+                          const isOverridden = !isCustomForm && Boolean(formOverrides[form.id])
                           return (
                             <div key={form.id} className="flex items-center justify-between gap-3 px-4 py-2.5">
                               <div className="flex items-center gap-2 min-w-0">
                                 <form.icon size={14} className="text-subtle shrink-0" />
                                 <span className="text-sm truncate">{form.title}</span>
                                 <Badge custom={isCustomForm} small />
+                                {isOverridden && (
+                                  <span className="rounded-full bg-amber-500/10 text-amber-600 dark:text-amber-400 font-medium shrink-0 text-[10px] px-1.5 py-0.5">
+                                    Изменено
+                                  </span>
+                                )}
                               </div>
-                              {isCustomForm && (
-                                <button
-                                  onClick={() => {
-                                    if (confirm(`Удалить заявку «${form.title}»?`)) removeForm(form.id)
-                                  }}
-                                  className="flex h-6 w-6 items-center justify-center rounded-full text-subtle hover:bg-red-500/10 hover:text-red-500 transition-colors shrink-0"
-                                  aria-label="Удалить заявку"
+                              <div className="flex items-center gap-1 shrink-0">
+                                <Link
+                                  to={`/admin/edit/${form.id}`}
+                                  className="flex h-6 w-6 items-center justify-center rounded-full text-subtle hover:bg-accent/10 hover:text-accent transition-colors"
+                                  aria-label="Редактировать заявку"
                                 >
-                                  <Trash2 size={12} />
-                                </button>
-                              )}
+                                  <Pencil size={12} />
+                                </Link>
+                                {isCustomForm && (
+                                  <button
+                                    onClick={() => {
+                                      if (confirm(`Удалить заявку «${form.title}»?`)) removeForm(form.id)
+                                    }}
+                                    className="flex h-6 w-6 items-center justify-center rounded-full text-subtle hover:bg-red-500/10 hover:text-red-500 transition-colors"
+                                    aria-label="Удалить заявку"
+                                  >
+                                    <Trash2 size={12} />
+                                  </button>
+                                )}
+                              </div>
                             </div>
                           )
                         })}

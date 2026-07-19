@@ -1,14 +1,27 @@
 import { useMemo } from 'react'
 import { builtInDepartments } from './catalog'
 import { resolveIcon } from './icons'
-import { useAdminStore } from '../store/adminStore'
-import type { Department } from './types'
+import { useAdminStore, type FormOverride } from '../store/adminStore'
+import type { Department, FormEntry } from './types'
 
-/** Merges the built-in catalog with admin-added departments/categories/forms into one reactive list. */
+function applyOverride(form: FormEntry, override: FormOverride | undefined): FormEntry {
+  if (!override) return form
+  return {
+    ...form,
+    title: override.title ?? form.title,
+    description: override.description ?? form.description,
+    icon: override.iconName ? resolveIcon(override.iconName) : form.icon,
+    disabled: override.disabled ?? form.disabled,
+    disabledNote: override.disabledNote ?? form.disabledNote,
+  }
+}
+
+/** Merges the built-in catalog with admin-added departments/categories/forms (and edits) into one reactive list. */
 export function useCatalog(): Department[] {
   const customDepartments = useAdminStore((s) => s.customDepartments)
   const customCategories = useAdminStore((s) => s.customCategories)
   const customForms = useAdminStore((s) => s.customForms)
+  const formOverrides = useAdminStore((s) => s.formOverrides)
 
   return useMemo(() => {
     const departmentMap = new Map<string, Department>()
@@ -16,8 +29,11 @@ export function useCatalog(): Department[] {
     for (const department of builtInDepartments) {
       departmentMap.set(department.id, {
         ...department,
-        categories: department.categories.map((category) => ({ ...category, forms: [...category.forms] })),
-        directForms: [...department.directForms],
+        categories: department.categories.map((category) => ({
+          ...category,
+          forms: category.forms.map((form) => applyOverride(form, formOverrides[form.id])),
+        })),
+        directForms: department.directForms.map((form) => applyOverride(form, formOverrides[form.id])),
       })
     }
 
@@ -42,7 +58,7 @@ export function useCatalog(): Department[] {
     for (const customForm of customForms) {
       const department = departmentMap.get(customForm.departmentId)
       if (!department) continue
-      const formEntry = {
+      const formEntry: FormEntry = {
         id: customForm.id,
         title: customForm.title,
         description: customForm.description,
@@ -61,5 +77,5 @@ export function useCatalog(): Department[] {
     }
 
     return Array.from(departmentMap.values())
-  }, [customDepartments, customCategories, customForms])
+  }, [customDepartments, customCategories, customForms, formOverrides])
 }

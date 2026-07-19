@@ -1,10 +1,13 @@
-import { useMemo, useState } from 'react'
-import { useNavigate, Navigate } from 'react-router-dom'
+import { useState } from 'react'
+import { useNavigate, useParams, Navigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { Plus, Trash2, ChevronUp, ChevronDown, Save, ArrowLeft } from 'lucide-react'
+import { Plus, Trash2, ChevronUp, ChevronDown, Save, ArrowLeft, RotateCcw } from 'lucide-react'
 import { useCatalog } from '../data/useCatalog'
+import { findFormLocation } from '../data/catalog'
+import { getFormFields } from '../data/formSchemas'
 import { useAdminStore } from '../store/adminStore'
 import { useAdminAuthStore } from '../store/adminAuthStore'
+import { findIconName } from '../data/icons'
 import IconPicker from '../components/IconPicker'
 import ColorPicker from '../components/ColorPicker'
 import FieldRenderer, { type FieldValue } from '../components/FieldRenderer'
@@ -38,32 +41,74 @@ function defaultField(type: FieldType): FormField {
   return base
 }
 
-export default function AdminNewFormPage() {
+export default function AdminFormBuilderPage() {
   const { isAdmin } = useAdminAuthStore()
+  const { formId: editFormId } = useParams()
   const departments = useCatalog()
-  const { addDepartment, addCategory, addForm } = useAdminStore()
+  const {
+    addDepartment,
+    addCategory,
+    addForm,
+    updateForm,
+    setFormOverride,
+    clearFormOverride,
+    customForms,
+    formOverrides,
+  } = useAdminStore()
   const navigate = useNavigate()
 
+  const customForm = editFormId ? customForms.find((f) => f.id === editFormId) : undefined
+  const location = editFormId ? findFormLocation(departments, editFormId) : null
+  const isEdit = Boolean(editFormId)
+  const isBuiltInEdit = isEdit && !customForm && Boolean(location)
+  const override = editFormId ? formOverrides[editFormId] : undefined
+  const hasOverride = isBuiltInEdit && Boolean(override)
+
   const [deptMode, setDeptMode] = useState<'existing' | 'new'>('existing')
-  const [selectedDeptId, setSelectedDeptId] = useState(departments[0]?.id ?? '')
+  const [selectedDeptId, setSelectedDeptId] = useState(
+    () => customForm?.departmentId ?? location?.department.id ?? departments[0]?.id ?? '',
+  )
   const [newDeptTitle, setNewDeptTitle] = useState('')
   const [newDeptDescription, setNewDeptDescription] = useState('')
   const [newDeptIcon, setNewDeptIcon] = useState('Building2')
   const [newDeptColor, setNewDeptColor] = useState('#0071e3')
 
-  const [catMode, setCatMode] = useState<'none' | 'existing' | 'new'>('none')
-  const [selectedCatId, setSelectedCatId] = useState('')
+  const [catMode, setCatMode] = useState<'none' | 'existing' | 'new'>(() =>
+    customForm?.categoryId ? 'existing' : 'none',
+  )
+  const [selectedCatId, setSelectedCatId] = useState(() => customForm?.categoryId ?? '')
   const [newCatTitle, setNewCatTitle] = useState('')
 
-  const [title, setTitle] = useState('')
-  const [description, setDescription] = useState('')
-  const [iconName, setIconName] = useState('HelpCircle')
-  const [fields, setFields] = useState<FormField[]>([defaultField('textarea')])
+  const [title, setTitle] = useState(() => customForm?.title ?? override?.title ?? location?.form.title ?? '')
+  const [description, setDescription] = useState(
+    () => customForm?.description ?? override?.description ?? location?.form.description ?? '',
+  )
+  const [iconName, setIconName] = useState(() => {
+    if (customForm) return customForm.iconName
+    if (override?.iconName) return override.iconName
+    if (location) return findIconName(location.form.icon)
+    return 'HelpCircle'
+  })
+  const [fields, setFields] = useState<FormField[]>(() => {
+    if (customForm) return customForm.fields
+    if (override?.fields) return override.fields
+    if (location) return getFormFields(location.form.id, location.form.title, location.category?.title)
+    return [defaultField('textarea')]
+  })
+  const [disabled, setDisabled] = useState(
+    () => customForm?.disabled ?? override?.disabled ?? location?.form.disabled ?? false,
+  )
+  const [disabledNote, setDisabledNote] = useState(
+    () => customForm?.disabledNote ?? override?.disabledNote ?? location?.form.disabledNote ?? '',
+  )
   const [previewValues, setPreviewValues] = useState<Record<string, FieldValue>>({})
   const [error, setError] = useState('')
 
   const activeDept = departments.find((d) => d.id === selectedDeptId)
   const categoryOptions = deptMode === 'existing' ? activeDept?.categories ?? [] : []
+
+  if (!isAdmin) return <Navigate to="/admin" replace />
+  if (isEdit && !customForm && !location) return <Navigate to="/admin" replace />
 
   function updateField(index: number, patch: Partial<FormField>) {
     setFields((prev) => prev.map((f, i) => (i === index ? { ...f, ...patch } : f)))
@@ -126,21 +171,23 @@ export default function AdminNewFormPage() {
   function handleSave() {
     setError('')
 
-    if (deptMode === 'new' && !newDeptTitle.trim()) {
-      setError('Укажите название нового направления')
-      return
-    }
-    if (deptMode === 'existing' && !selectedDeptId) {
-      setError('Выберите направление')
-      return
-    }
-    if (catMode === 'new' && !newCatTitle.trim()) {
-      setError('Укажите название новой категории')
-      return
-    }
-    if (catMode === 'existing' && !selectedCatId) {
-      setError('Выберите категорию')
-      return
+    if (!isBuiltInEdit) {
+      if (deptMode === 'new' && !newDeptTitle.trim()) {
+        setError('Укажите название нового направления')
+        return
+      }
+      if (deptMode === 'existing' && !selectedDeptId) {
+        setError('Выберите направление')
+        return
+      }
+      if (catMode === 'new' && !newCatTitle.trim()) {
+        setError('Укажите название новой категории')
+        return
+      }
+      if (catMode === 'existing' && !selectedCatId) {
+        setError('Выберите категорию')
+        return
+      }
     }
     if (!title.trim()) {
       setError('Укажите название заявки')
@@ -160,6 +207,23 @@ export default function AdminNewFormPage() {
         return
       }
     }
+    if (disabled && !disabledNote.trim()) {
+      setError('Укажите причину, по которой заявка временно отключена')
+      return
+    }
+
+    if (isBuiltInEdit && editFormId) {
+      setFormOverride(editFormId, {
+        title: title.trim(),
+        description: description.trim(),
+        iconName,
+        fields,
+        disabled,
+        disabledNote: disabled ? disabledNote.trim() : undefined,
+      })
+      navigate('/admin')
+      return
+    }
 
     let departmentId = selectedDeptId
     if (deptMode === 'new') {
@@ -177,21 +241,31 @@ export default function AdminNewFormPage() {
       categoryId = addCategory({ title: newCatTitle.trim(), departmentId })
     }
 
-    addForm({
+    const payload = {
       title: title.trim(),
       description: description.trim(),
       iconName,
       departmentId,
       categoryId,
       fields,
-    })
+      disabled,
+      disabledNote: disabled ? disabledNote.trim() : undefined,
+    }
+
+    if (customForm) {
+      updateForm(customForm.id, payload)
+    } else {
+      addForm(payload)
+    }
 
     navigate('/admin')
   }
 
-  const previewFieldsForRender = useMemo(() => fields, [fields])
-
-  if (!isAdmin) return <Navigate to="/admin" replace />
+  function handleRevert() {
+    if (!editFormId) return
+    clearFormOverride(editFormId)
+    navigate('/admin')
+  }
 
   return (
     <div className="mx-auto max-w-6xl px-5 pt-8 pb-24">
@@ -202,97 +276,129 @@ export default function AdminNewFormPage() {
         <ArrowLeft size={15} /> Назад в админ-панель
       </button>
 
-      <h1 className="text-2xl sm:text-3xl font-semibold tracking-tight mb-1">Новая форма заявки</h1>
+      <div className="flex items-center justify-between gap-4 flex-wrap mb-1">
+        <h1 className="text-2xl sm:text-3xl font-semibold tracking-tight">
+          {isEdit ? 'Редактирование заявки' : 'Новая форма заявки'}
+        </h1>
+        {hasOverride && (
+          <button
+            onClick={handleRevert}
+            className="flex items-center gap-1.5 rounded-full border border-black/10 dark:border-white/10 px-3.5 py-1.5 text-xs font-medium text-subtle hover:border-accent hover:text-accent transition-colors"
+          >
+            <RotateCcw size={13} /> Восстановить исходный вариант
+          </button>
+        )}
+      </div>
       <p className="text-subtle dark:text-subtle-dark text-[14px] mb-8">
-        Заполните конструктор слева — предпросмотр справа обновляется сразу
+        {isEdit
+          ? 'Измените поля слева — предпросмотр справа обновляется сразу'
+          : 'Заполните конструктор слева — предпросмотр справа обновляется сразу'}
       </p>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         <div className="space-y-6">
-          <Section title="Направление">
-            <ModeToggle
-              options={[
-                { value: 'existing', label: 'Существующее' },
-                { value: 'new', label: '+ Новое направление' },
-              ]}
-              value={deptMode}
-              onChange={(v) => setDeptMode(v as typeof deptMode)}
-            />
-            {deptMode === 'existing' ? (
-              <select
-                value={selectedDeptId}
-                onChange={(e) => {
-                  setSelectedDeptId(e.target.value)
-                  setCatMode('none')
-                  setSelectedCatId('')
-                }}
-                className={inputClass}
-              >
-                {departments.map((d) => (
-                  <option key={d.id} value={d.id}>
-                    {d.title}
-                  </option>
-                ))}
-              </select>
-            ) : (
-              <div className="space-y-3">
-                <input
-                  value={newDeptTitle}
-                  onChange={(e) => setNewDeptTitle(e.target.value)}
-                  placeholder="Название направления"
-                  className={inputClass}
+          {isBuiltInEdit ? (
+            <Section title="Направление">
+              <p className="text-sm text-subtle">
+                {location?.department.title}
+                {location?.category ? ` · ${location.category.title}` : ''}
+              </p>
+              <p className="text-xs text-subtle mt-1.5">
+                У встроенных заявок нельзя изменить направление или категорию.
+              </p>
+            </Section>
+          ) : (
+            <>
+              <Section title="Направление">
+                <ModeToggle
+                  options={[
+                    { value: 'existing', label: 'Существующее' },
+                    { value: 'new', label: '+ Новое направление' },
+                  ]}
+                  value={deptMode}
+                  onChange={(v) => setDeptMode(v as typeof deptMode)}
                 />
-                <input
-                  value={newDeptDescription}
-                  onChange={(e) => setNewDeptDescription(e.target.value)}
-                  placeholder="Короткое описание направления"
-                  className={inputClass}
-                />
-                <div>
-                  <p className="text-xs text-subtle mb-1.5">Иконка</p>
-                  <IconPicker value={newDeptIcon} onChange={setNewDeptIcon} />
-                </div>
-                <div>
-                  <p className="text-xs text-subtle mb-1.5">Цвет</p>
-                  <ColorPicker value={newDeptColor} onChange={setNewDeptColor} />
-                </div>
-              </div>
-            )}
-          </Section>
+                {deptMode === 'existing' ? (
+                  <select
+                    value={selectedDeptId}
+                    onChange={(e) => {
+                      setSelectedDeptId(e.target.value)
+                      setCatMode('none')
+                      setSelectedCatId('')
+                    }}
+                    className={inputClass}
+                  >
+                    {departments.map((d) => (
+                      <option key={d.id} value={d.id}>
+                        {d.title}
+                      </option>
+                    ))}
+                  </select>
+                ) : (
+                  <div className="space-y-3">
+                    <input
+                      value={newDeptTitle}
+                      onChange={(e) => setNewDeptTitle(e.target.value)}
+                      placeholder="Название направления"
+                      className={inputClass}
+                    />
+                    <input
+                      value={newDeptDescription}
+                      onChange={(e) => setNewDeptDescription(e.target.value)}
+                      placeholder="Короткое описание направления"
+                      className={inputClass}
+                    />
+                    <div>
+                      <p className="text-xs text-subtle mb-1.5">Иконка</p>
+                      <IconPicker value={newDeptIcon} onChange={setNewDeptIcon} />
+                    </div>
+                    <div>
+                      <p className="text-xs text-subtle mb-1.5">Цвет</p>
+                      <ColorPicker value={newDeptColor} onChange={setNewDeptColor} />
+                    </div>
+                  </div>
+                )}
+              </Section>
 
-          <Section title="Категория (необязательно)">
-            <ModeToggle
-              options={[
-                { value: 'none', label: 'Без категории' },
-                ...(deptMode === 'existing' && categoryOptions.length
-                  ? [{ value: 'existing', label: 'Существующая' }]
-                  : []),
-                { value: 'new', label: '+ Новая категория' },
-              ]}
-              value={catMode}
-              onChange={(v) => setCatMode(v as typeof catMode)}
-            />
-            {catMode === 'existing' && (
-              <select value={selectedCatId} onChange={(e) => setSelectedCatId(e.target.value)} className={inputClass}>
-                <option value="" disabled>
-                  Выберите категорию…
-                </option>
-                {categoryOptions.map((c) => (
-                  <option key={c.id} value={c.id}>
-                    {c.title}
-                  </option>
-                ))}
-              </select>
-            )}
-            {catMode === 'new' && (
-              <input
-                value={newCatTitle}
-                onChange={(e) => setNewCatTitle(e.target.value)}
-                placeholder="Название категории"
-                className={inputClass}
-              />
-            )}
-          </Section>
+              <Section title="Категория (необязательно)">
+                <ModeToggle
+                  options={[
+                    { value: 'none', label: 'Без категории' },
+                    ...(deptMode === 'existing' && categoryOptions.length
+                      ? [{ value: 'existing', label: 'Существующая' }]
+                      : []),
+                    { value: 'new', label: '+ Новая категория' },
+                  ]}
+                  value={catMode}
+                  onChange={(v) => setCatMode(v as typeof catMode)}
+                />
+                {catMode === 'existing' && (
+                  <select
+                    value={selectedCatId}
+                    onChange={(e) => setSelectedCatId(e.target.value)}
+                    className={inputClass}
+                  >
+                    <option value="" disabled>
+                      Выберите категорию…
+                    </option>
+                    {categoryOptions.map((c) => (
+                      <option key={c.id} value={c.id}>
+                        {c.title}
+                      </option>
+                    ))}
+                  </select>
+                )}
+                {catMode === 'new' && (
+                  <input
+                    value={newCatTitle}
+                    onChange={(e) => setNewCatTitle(e.target.value)}
+                    placeholder="Название категории"
+                    className={inputClass}
+                  />
+                )}
+              </Section>
+            </>
+          )}
 
           <Section title="Заявка">
             <div className="space-y-3">
@@ -311,6 +417,20 @@ export default function AdminNewFormPage() {
               <div>
                 <p className="text-xs text-subtle mb-1.5">Иконка</p>
                 <IconPicker value={iconName} onChange={setIconName} />
+              </div>
+              <div className="pt-1">
+                <label className="flex items-center gap-1.5 text-xs text-subtle">
+                  <input type="checkbox" checked={disabled} onChange={(e) => setDisabled(e.target.checked)} />
+                  Временно отключить эту заявку
+                </label>
+                {disabled && (
+                  <input
+                    value={disabledNote}
+                    onChange={(e) => setDisabledNote(e.target.value)}
+                    placeholder="Причина (покажем вместо формы), например «Раздел временно не используется»"
+                    className={`${inputClass} mt-2`}
+                  />
+                )}
               </div>
             </div>
           </Section>
@@ -446,15 +566,13 @@ export default function AdminNewFormPage() {
             </div>
           </Section>
 
-          {error && (
-            <p className="rounded-xl bg-red-500/10 text-red-500 text-sm px-4 py-3">{error}</p>
-          )}
+          {error && <p className="rounded-xl bg-red-500/10 text-red-500 text-sm px-4 py-3">{error}</p>}
 
           <button
             onClick={handleSave}
             className="w-full flex items-center justify-center gap-2 rounded-xl bg-accent hover:bg-accent-hover text-white font-medium py-3 text-[15px] transition-colors"
           >
-            <Save size={16} /> Сохранить и опубликовать форму
+            <Save size={16} /> {isEdit ? 'Сохранить изменения' : 'Сохранить и опубликовать форму'}
           </button>
         </div>
 
@@ -464,7 +582,7 @@ export default function AdminNewFormPage() {
             <h2 className="text-xl font-semibold tracking-tight mb-1.5">{previewTitle}</h2>
             <p className="text-subtle dark:text-subtle-dark text-sm mb-6">{previewDescription}</p>
             <div className="space-y-5">
-              {previewFieldsForRender.map((field) => (
+              {fields.map((field) => (
                 <FieldRenderer
                   key={field.id}
                   field={field}
@@ -472,7 +590,7 @@ export default function AdminNewFormPage() {
                   onChange={(v) => setPreviewValues((prev) => ({ ...prev, [field.id]: v }))}
                 />
               ))}
-              {previewFieldsForRender.length === 0 && (
+              {fields.length === 0 && (
                 <p className="text-sm text-subtle text-center py-6">Добавьте хотя бы одно поле</p>
               )}
             </div>
