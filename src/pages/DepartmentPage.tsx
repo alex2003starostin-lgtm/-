@@ -44,13 +44,16 @@ export default function DepartmentPage() {
       {sections.length > 1 && (
         <div className="flex flex-wrap gap-2 my-6">
           {sections.map((s) => (
-            <a
+            <button
               key={s.id}
-              href={`#${s.id}`}
+              type="button"
+              onClick={() =>
+                document.getElementById(s.id)?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+              }
               className="rounded-full border border-black/10 dark:border-white/10 px-3.5 py-1.5 text-xs font-medium text-subtle hover:text-accent hover:border-accent transition-colors"
             >
               {s.title}
-            </a>
+            </button>
           ))}
         </div>
       )}

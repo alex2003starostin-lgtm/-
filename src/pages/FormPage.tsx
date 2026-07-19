@@ -117,7 +117,7 @@ export default function FormPage() {
       <Breadcrumbs
         items={[
           { label: department.title, to: `/dept/${department.id}` },
-          ...(category ? [{ label: category.title, to: `/dept/${department.id}#${category.id}` }] : []),
+          ...(category ? [{ label: category.title, to: `/dept/${department.id}` }] : []),
           { label: form.title },
         ]}
       />
