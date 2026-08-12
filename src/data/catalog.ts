@@ -87,18 +87,6 @@ export const builtInDepartments: Department[] = [
     color: '#0071e3',
     directForms: [
       {
-        id: 'it-change-request',
-        title: 'Заявка на изменение',
-        description: 'Запрос на изменение существующего функционала ИТ-систем',
-        icon: Settings2,
-      },
-      {
-        id: 'it-video',
-        title: 'Видеонаблюдение',
-        description: 'Доступ к архиву, настройка камер и другие вопросы по видеонаблюдению',
-        icon: Video,
-      },
-      {
         id: 'it-yandex-tracker',
         title: 'Доработка Yandex Tracker',
         description: 'Доработка и настройка Yandex Tracker',
@@ -193,6 +181,18 @@ export const builtInDepartments: Department[] = [
         ],
       },
       {
+        id: 'it-znd',
+        title: 'Заявка на доработку (ЗНД)',
+        forms: [
+          {
+            id: 'it-change-request',
+            title: 'Заявка на изменение (ЗНИ)',
+            description: 'Запрос на изменение существующего процесса или функциональности ИТ-систем',
+            icon: Settings2,
+          },
+        ],
+      },
+      {
         id: 'it-edo',
         title: 'ЭЦП и ЭДО',
         forms: [
@@ -249,6 +249,18 @@ export const builtInDepartments: Department[] = [
             title: 'Решение проблем РЦ',
             description: 'Сообщить о технической проблеме в распределительном центре',
             icon: AlertTriangle,
+          },
+        ],
+      },
+      {
+        id: 'it-video-cat',
+        title: 'Видеонаблюдение',
+        forms: [
+          {
+            id: 'it-video',
+            title: 'Видеонаблюдение',
+            description: 'Доступ к архиву, настройка камер и другие вопросы по видеонаблюдению',
+            icon: Video,
           },
         ],
       },
