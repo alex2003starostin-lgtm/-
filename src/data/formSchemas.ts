@@ -21,6 +21,13 @@ const ATTACHMENTS_FIELD: FormField = {
   helpText: 'Скриншоты, документы или другие файлы, помогающие понять задачу',
 }
 
+const OPTIONAL_ATTACHMENT_FIELD: FormField = {
+  id: 'optionalAttachment',
+  label: 'Прикрепите файл при необходимости',
+  type: 'file',
+  multiple: true,
+}
+
 const YES_NO_OPTIONS = [
   { value: 'yes', label: 'Да' },
   { value: 'no', label: 'Нет' },
@@ -90,6 +97,7 @@ export const formSchemas: Record<string, FormField[]> = {
       ],
     },
     ADDITIONAL_INFO_FIELD,
+    OPTIONAL_ATTACHMENT_FIELD,
   ],
 
   'it-access': [
@@ -115,6 +123,7 @@ export const formSchemas: Record<string, FormField[]> = {
       ],
     },
     ADDITIONAL_INFO_FIELD,
+    OPTIONAL_ATTACHMENT_FIELD,
   ],
 
   'it-incident': [
@@ -151,6 +160,7 @@ export const formSchemas: Record<string, FormField[]> = {
       ],
     },
     ADDITIONAL_INFO_FIELD,
+    OPTIONAL_ATTACHMENT_FIELD,
   ],
 
   'it-offboarding': [
@@ -161,12 +171,14 @@ export const formSchemas: Record<string, FormField[]> = {
     { id: 'office', label: 'Адрес увольнения', type: 'select', required: true, options: OFFICE_OPTIONS },
     { id: 'shippingAddress', label: 'Адрес отправки оборудования', type: 'text' },
     ADDITIONAL_INFO_FIELD,
+    OPTIONAL_ATTACHMENT_FIELD,
   ],
 
   'it-software': [
     themeField('Тема установки программного обеспечения'),
     { id: 'softwareName', label: 'Укажите название программного обеспечения', type: 'text', required: true },
     ADDITIONAL_INFO_FIELD,
+    OPTIONAL_ATTACHMENT_FIELD,
   ],
 
   'it-consult': [
@@ -204,6 +216,7 @@ export const formSchemas: Record<string, FormField[]> = {
     },
     { id: 'description', label: 'Описание консультации', type: 'textarea', required: true },
     ADDITIONAL_INFO_FIELD,
+    OPTIONAL_ATTACHMENT_FIELD,
   ],
 
   // ─── ИТ · Техническая поддержка 1С ─────────────────────────────
@@ -212,12 +225,14 @@ export const formSchemas: Record<string, FormField[]> = {
     { id: 'config', label: 'Конфигурация базы', type: 'select', required: true, options: CONFIG_1C_OPTIONS },
     { id: 'role', label: 'Роль или пользователь с аналогичными ролями', type: 'text' },
     ADDITIONAL_INFO_FIELD,
+    OPTIONAL_ATTACHMENT_FIELD,
   ],
 
   'it-1c-consult': [
     themeField('Тема консультации 1С'),
     { id: 'config', label: 'Конфигурация базы', type: 'select', required: true, options: CONFIG_1C_OPTIONS },
     ADDITIONAL_INFO_FIELD,
+    OPTIONAL_ATTACHMENT_FIELD,
   ],
 
   'it-1c-copies': [
@@ -242,6 +257,7 @@ export const formSchemas: Record<string, FormField[]> = {
         { value: 'publish', label: 'Публикация на веб сервере' },
       ],
     },
+    OPTIONAL_ATTACHMENT_FIELD,
   ],
 
   'it-1c-errors': [
@@ -262,6 +278,7 @@ export const formSchemas: Record<string, FormField[]> = {
       ],
     },
     ADDITIONAL_INFO_FIELD,
+    OPTIONAL_ATTACHMENT_FIELD,
   ],
 
   'it-1c-registration': [
@@ -305,11 +322,13 @@ export const formSchemas: Record<string, FormField[]> = {
     },
     { id: 'occurredAt', label: 'Укажите дату и время (по возможности) возникновения проблемы', type: 'text' },
     { id: 'details', label: 'Детали обращения', type: 'textarea', required: true },
+    OPTIONAL_ATTACHMENT_FIELD,
   ],
 
   'it-1c-dopp': [
     { id: 'doppNumber', label: 'Номер ДОПП в 1С / номер груза / номер поставки', type: 'text', required: true },
     { id: 'description', label: 'Описание проблемы', type: 'textarea', required: true },
+    OPTIONAL_ATTACHMENT_FIELD,
   ],
 
   // ─── ИТ · Заявка на доработку (ЗНД) ─────────────────────────────
@@ -359,6 +378,7 @@ export const formSchemas: Record<string, FormField[]> = {
     { id: 'currentDrawbacks', label: 'Недостатки текущего процесса', type: 'textarea', required: true },
     { id: 'targetProcess', label: 'Целевой процесс', type: 'textarea', required: true },
     { id: 'risks', label: 'Риски не реализации', type: 'textarea', required: true },
+    OPTIONAL_ATTACHMENT_FIELD,
   ],
 
   // ─── ИТ · ЭЦП и ЭДО ─────────────────────────────────────────────
@@ -378,26 +398,31 @@ export const formSchemas: Record<string, FormField[]> = {
     },
     { id: 'loginAndName', label: 'Укажите логин учетной записи и ФИО пользователя', type: 'text', required: true },
     ADDITIONAL_INFO_FIELD,
+    OPTIONAL_ATTACHMENT_FIELD,
   ],
 
   'it-edo-rights': [
     themeField('Тема изменения прав доступа к сервису ЭДО'),
     { id: 'description', label: 'Описание запроса', type: 'textarea', required: true },
+    OPTIONAL_ATTACHMENT_FIELD,
   ],
 
   'it-edo-other': [
     themeField('Тема иное ЭЦП или ЭДО'),
     { id: 'description', label: 'Описание запроса', type: 'textarea', required: true },
+    OPTIONAL_ATTACHMENT_FIELD,
   ],
 
   'it-edo-revoke': [
     themeField('Тема отзыва электронной подписи'),
     { id: 'description', label: 'Описание запроса', type: 'textarea', required: true },
+    OPTIONAL_ATTACHMENT_FIELD,
   ],
 
   'it-edo-problem': [
     themeField('Тема проблемы в работе ключа ЭЦП или сервиса'),
     { id: 'description', label: 'Описание запроса', type: 'textarea', required: true },
+    OPTIONAL_ATTACHMENT_FIELD,
   ],
 
   'it-edo-mchd': [
@@ -417,6 +442,7 @@ export const formSchemas: Record<string, FormField[]> = {
       required: true,
       helpText: 'Подтверждаю: инструкция изучена',
     },
+    OPTIONAL_ATTACHMENT_FIELD,
   ],
 
   // ─── ИТ · Техническая поддержка РЦ ─────────────────────────────
@@ -425,6 +451,7 @@ export const formSchemas: Record<string, FormField[]> = {
     { id: 'rc', label: 'Распределительный центр', type: 'select', required: true, options: RC_OPTIONS },
     { id: 'direction', label: 'Направление работ', type: 'select', required: true, options: RC_WORK_DIRECTION_OPTIONS },
     ADDITIONAL_INFO_FIELD,
+    OPTIONAL_ATTACHMENT_FIELD,
   ],
 
   'it-rc-problem': [
@@ -432,6 +459,7 @@ export const formSchemas: Record<string, FormField[]> = {
     { id: 'rc', label: 'Распределительный центр', type: 'select', required: true, options: RC_OPTIONS },
     { id: 'direction', label: 'Направление работ', type: 'select', required: true, options: RC_WORK_DIRECTION_OPTIONS },
     ADDITIONAL_INFO_FIELD,
+    OPTIONAL_ATTACHMENT_FIELD,
   ],
 
   // ─── ИТ · Видеонаблюдение ───────────────────────────────────────
@@ -449,12 +477,14 @@ export const formSchemas: Record<string, FormField[]> = {
       ],
     },
     ADDITIONAL_INFO_FIELD,
+    OPTIONAL_ATTACHMENT_FIELD,
   ],
 
   // ─── ИТ · ИС ЛОГОС ──────────────────────────────────────────────
   'it-logos-consult': [
     themeField('Тема консультации по работе ИС Логос'),
     { id: 'description', label: 'Описание запроса', type: 'textarea', required: true },
+    OPTIONAL_ATTACHMENT_FIELD,
   ],
 
   'it-logos-access': [
@@ -470,6 +500,7 @@ export const formSchemas: Record<string, FormField[]> = {
       ],
     },
     ADDITIONAL_INFO_FIELD,
+    OPTIONAL_ATTACHMENT_FIELD,
   ],
 
   'it-logos-error': [
@@ -486,6 +517,7 @@ export const formSchemas: Record<string, FormField[]> = {
       ],
     },
     { id: 'description', label: 'Подробное описание проблемы', type: 'textarea', required: true },
+    OPTIONAL_ATTACHMENT_FIELD,
   ],
 
   // ─── ИТ · ИТ Инфраструктура ─────────────────────────────────────
@@ -521,6 +553,7 @@ export const formSchemas: Record<string, FormField[]> = {
       content: 'Создаются две пары ключей — одна RW, вторая RO — и выдаются заявителю.',
     },
     ADDITIONAL_INFO_FIELD,
+    OPTIONAL_ATTACHMENT_FIELD,
   ],
 
   'it-infra-db': [
@@ -534,17 +567,20 @@ export const formSchemas: Record<string, FormField[]> = {
     { id: 'serverName', label: 'Имя сервера/кластера, на котором необходимо создать базу данных', type: 'text', required: true },
     { id: 'dbName', label: 'Имя новой базы данных', type: 'text', required: true },
     ADDITIONAL_INFO_FIELD,
+    OPTIONAL_ATTACHMENT_FIELD,
   ],
 
   'it-infra-change': [
     themeField('Тема изменения информационной системы/сервиса'),
     { id: 'systemName', label: 'Название информационной системы/сервиса, требующего изменения', type: 'text', required: true },
     { id: 'description', label: 'Описание запроса', type: 'textarea', required: true },
+    OPTIONAL_ATTACHMENT_FIELD,
   ],
 
   'it-infra-monitoring': [
     themeField('Тема мониторинга'),
     { id: 'description', label: 'Детальное описание задачи', type: 'textarea', required: true },
+    OPTIONAL_ATTACHMENT_FIELD,
   ],
 
   'it-infra-vm': [
@@ -591,6 +627,7 @@ export const formSchemas: Record<string, FormField[]> = {
     { id: 'software', label: 'Укажите какое дополнительное ПО необходимо установить', type: 'text' },
     { id: 'accessFor', label: 'Укажите кому и какие доступы необходимо предоставить', type: 'text' },
     ADDITIONAL_INFO_FIELD,
+    OPTIONAL_ATTACHMENT_FIELD,
   ],
 
   'it-infra-network': [
@@ -598,6 +635,7 @@ export const formSchemas: Record<string, FormField[]> = {
     { id: 'to', label: 'Куда', type: 'text', required: true },
     { id: 'accessFor', label: 'Кому необходимо предоставить доступ', type: 'text', required: true },
     ADDITIONAL_INFO_FIELD,
+    OPTIONAL_ATTACHMENT_FIELD,
   ],
 
   'it-infra-business-service': [
@@ -622,6 +660,7 @@ export const formSchemas: Record<string, FormField[]> = {
       ],
     },
     ADDITIONAL_INFO_FIELD,
+    OPTIONAL_ATTACHMENT_FIELD,
   ],
 
   // ─── EDI/ЭДО ─────────────────────────────────────────────────────
@@ -641,6 +680,7 @@ export const formSchemas: Record<string, FormField[]> = {
       ],
     },
     { id: 'description', label: 'Описание проблемы', type: 'textarea', required: true },
+    OPTIONAL_ATTACHMENT_FIELD,
   ],
 
   'edi-connect': [
@@ -651,6 +691,7 @@ export const formSchemas: Record<string, FormField[]> = {
     { id: 'contractLink', label: 'Ссылка на подписанный договор 1С', type: 'text' },
     { id: 'organization', label: 'Подключение от организации', type: 'select', required: true, options: EDI_ORG_OPTIONS },
     { id: 'description', label: 'Описание запроса', type: 'textarea', required: true },
+    OPTIONAL_ATTACHMENT_FIELD,
   ],
 
   'edi-invite': [
@@ -675,6 +716,7 @@ export const formSchemas: Record<string, FormField[]> = {
       ],
     },
     { id: 'description', label: 'Описание запроса', type: 'textarea', required: true },
+    OPTIONAL_ATTACHMENT_FIELD,
   ],
 
   // ─── HR ──────────────────────────────────────────────────────────
@@ -690,6 +732,7 @@ export const formSchemas: Record<string, FormField[]> = {
     },
     { id: 'fitAssessment', label: 'Считаешь ли ты, что кандидат впишется в нашу команду?', type: 'textarea', required: true },
     { id: 'comment', label: 'Дополнительный комментарий', type: 'textarea' },
+    OPTIONAL_ATTACHMENT_FIELD,
   ],
 
   'hr-dms': [
@@ -722,6 +765,7 @@ export const formSchemas: Record<string, FormField[]> = {
     { id: 'phone', label: 'Номер мобильного телефона', type: 'text', required: true },
     { id: 'email', label: 'Контактный e-mail', type: 'text', required: true },
     ADDITIONAL_INFO_FIELD,
+    OPTIONAL_ATTACHMENT_FIELD,
   ],
 
   'hr-recruitment': [
@@ -754,12 +798,14 @@ export const formSchemas: Record<string, FormField[]> = {
       options: YES_NO_OPTIONS,
     },
     ADDITIONAL_INFO_FIELD,
+    OPTIONAL_ATTACHMENT_FIELD,
   ],
 
   'hr-motivation': [
     themeField('Тема изменения мотивации'),
     { id: 'employeeName', label: 'Введите имя сотрудника', type: 'text', required: true },
     { id: 'justification', label: 'Обоснование пересмотра ЗП', type: 'textarea', required: true },
+    OPTIONAL_ATTACHMENT_FIELD,
   ],
 
   'hr-docs': [
@@ -787,6 +833,7 @@ export const formSchemas: Record<string, FormField[]> = {
       ],
     },
     ADDITIONAL_INFO_FIELD,
+    OPTIONAL_ATTACHMENT_FIELD,
   ],
 
   'hr-income': [
@@ -815,6 +862,7 @@ export const formSchemas: Record<string, FormField[]> = {
       ],
     },
     ADDITIONAL_INFO_FIELD,
+    OPTIONAL_ATTACHMENT_FIELD,
   ],
 
   // ─── АХО ─────────────────────────────────────────────────────────
@@ -836,6 +884,7 @@ export const formSchemas: Record<string, FormField[]> = {
     { id: 'email', label: 'Контактный e-mail', type: 'text', required: true },
     { id: 'phone', label: 'Номер сотового телефона сотрудника', type: 'text', required: true },
     ADDITIONAL_INFO_FIELD,
+    OPTIONAL_ATTACHMENT_FIELD,
   ],
 
   'axo-guest-pass': [
@@ -853,6 +902,7 @@ export const formSchemas: Record<string, FormField[]> = {
     },
     { id: 'phone', label: 'Контактный телефон', type: 'text', required: true },
     ADDITIONAL_INFO_FIELD,
+    OPTIONAL_ATTACHMENT_FIELD,
   ],
 
   'axo-courier': [
@@ -888,6 +938,7 @@ export const formSchemas: Record<string, FormField[]> = {
     { id: 'recipientName', label: 'ФИО получателя', type: 'text', required: true },
     { id: 'recipientPhone', label: 'Номер телефона получателя', type: 'text', required: true },
     ADDITIONAL_INFO_FIELD,
+    OPTIONAL_ATTACHMENT_FIELD,
   ],
 
   'axo-mobile': [
@@ -907,6 +958,7 @@ export const formSchemas: Record<string, FormField[]> = {
       ],
     },
     ADDITIONAL_INFO_FIELD,
+    OPTIONAL_ATTACHMENT_FIELD,
   ],
 
   'axo-stationery': [
@@ -925,6 +977,7 @@ export const formSchemas: Record<string, FormField[]> = {
     },
     { id: 'employeeName', label: 'ФИО сотрудника', type: 'text', required: true },
     { id: 'description', label: 'Описание запроса', type: 'textarea', required: true },
+    OPTIONAL_ATTACHMENT_FIELD,
   ],
 
   'axo-office': [
@@ -946,6 +999,7 @@ export const formSchemas: Record<string, FormField[]> = {
       ],
     },
     ADDITIONAL_INFO_FIELD,
+    OPTIONAL_ATTACHMENT_FIELD,
   ],
 
   'axo-travel-kmr': [
@@ -957,6 +1011,7 @@ export const formSchemas: Record<string, FormField[]> = {
       type: 'info',
       content: '⚠️ Приложите к заявке заполненный шаблон для создания ЛК КМР. Шаблон доступен для скачивания на портале HRBox.',
     },
+    OPTIONAL_ATTACHMENT_FIELD,
   ],
 
   'axo-travel-visa': [
@@ -977,6 +1032,7 @@ export const formSchemas: Record<string, FormField[]> = {
         '⚠️ Приложите к заявке необходимые документы: копию действующего общегражданского заграничного паспорта (страница с персональными данными) и приглашение от зарубежного партнёра.',
     },
     ADDITIONAL_INFO_FIELD,
+    OPTIONAL_ATTACHMENT_FIELD,
   ],
 
   'axo-translation-written': [
@@ -993,6 +1049,7 @@ export const formSchemas: Record<string, FormField[]> = {
       ],
     },
     ADDITIONAL_INFO_FIELD,
+    OPTIONAL_ATTACHMENT_FIELD,
   ],
 
   'axo-translation-oral': [
@@ -1001,11 +1058,13 @@ export const formSchemas: Record<string, FormField[]> = {
     { id: 'taskTime', label: 'Время задачи', type: 'text', required: true },
     { id: 'taskNature', label: 'Характер задачи', type: 'text', required: true },
     ADDITIONAL_INFO_FIELD,
+    OPTIONAL_ATTACHMENT_FIELD,
   ],
 
   'axo-concierge': [
     themeField('Тема консьерж сервис'),
     { id: 'description', label: 'Описание запроса', type: 'textarea', required: true },
+    OPTIONAL_ATTACHMENT_FIELD,
   ],
 
   // ─── Прочее ─────────────────────────────────────────────────────
